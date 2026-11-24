@@ -36,7 +36,7 @@ const mockCourses = [
 const mockOtherMentors = [
   {
     mentor_id: 2,
-    full_name: 'Ayşe Yılmaz',
+    full_name: 'Zeynep Arslan',
     department: 'Yazılım Mühendisliği',
     bio: 'Matematik ve algoritma dersi verebilirim.',
     courses: [
