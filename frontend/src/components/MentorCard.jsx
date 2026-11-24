@@ -1,6 +1,8 @@
 // Arama sonucundaki tek bir mentoru gösteren kart (sorumlu: Miraç).
-// Beklenen veri: { mentor_id, full_name, department, bio, courses: [{ id, name }] }
+// Beklenen veri: { mentor_id, full_name, department, bio, courses: [{ id, code, name }] }
 // Randevu talebi düğmesi Faz 4'te eklenecek.
+
+import { courseLabel } from '../services/mentorApi.js'
 
 const tagListStyle = {
   display: 'flex',
@@ -35,7 +37,7 @@ export default function MentorCard({ mentor }) {
           <ul style={tagListStyle}>
             {courses.map((course) => (
               <li key={course.id} style={tagStyle}>
-                {course.name}
+                {courseLabel(course)}
               </li>
             ))}
           </ul>

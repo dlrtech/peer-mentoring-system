@@ -25,11 +25,14 @@ const realApi = {
 const MOCK_USER_ID = 1
 
 const mockCourses = [
-  { id: 1, name: 'Matematik', description: 'Temel matematik' },
-  { id: 2, name: 'Veri Yapıları', description: 'Veri yapıları' },
-  { id: 3, name: 'Algoritmalar', description: 'Algoritma analizi ve tasarımı' },
-  { id: 4, name: 'Veritabanı Yönetimi', description: 'SQL ve veritabanı tasarımı' },
-  { id: 5, name: 'Nesne Yönelimli Programlama', description: 'Sınıflar, kalıtım, arayüzler' },
+  { id: 1, code: 'BYM105', name: 'Matematik I', description: null },
+  { id: 2, code: 'BYM224', name: 'Veri Yapıları ve Algoritmalar', description: null },
+  { id: 3, code: 'BYM302', name: 'Algoritma Analizi', description: null },
+  { id: 4, code: 'BYM301', name: 'Veritabanı Yönetimi', description: null },
+  { id: 5, code: 'BYM216', name: 'Nesne Yönelimli Programlama', description: null },
+  // Sözleşme gereği ders adı benzersiz değildir; aynı isimli iki ders kodlarıyla ayrılır.
+  { id: 6, code: 'BYM222', name: 'Görüntü İşleme', description: null },
+  { id: 7, code: 'BYM452', name: 'Görüntü İşleme', description: null },
 ]
 
 // Başka öğrencilerin profilleri (aramada görünür).
@@ -40,8 +43,8 @@ const mockOtherMentors = [
     department: 'Yazılım Mühendisliği',
     bio: 'Matematik ve algoritma dersi verebilirim.',
     courses: [
-      { id: 1, name: 'Matematik' },
-      { id: 3, name: 'Algoritmalar' },
+      { id: 1, code: 'BYM105', name: 'Matematik I' },
+      { id: 3, code: 'BYM302', name: 'Algoritma Analizi' },
     ],
   },
   {
@@ -50,8 +53,9 @@ const mockOtherMentors = [
     department: 'Bilgisayar Mühendisliği',
     bio: 'Veri yapıları ve OOP konularında yardımcı olurum.',
     courses: [
-      { id: 2, name: 'Veri Yapıları' },
-      { id: 5, name: 'Nesne Yönelimli Programlama' },
+      { id: 2, code: 'BYM224', name: 'Veri Yapıları ve Algoritmalar' },
+      { id: 5, code: 'BYM216', name: 'Nesne Yönelimli Programlama' },
+      { id: 6, code: 'BYM222', name: 'Görüntü İşleme' },
     ],
   },
 ]
@@ -93,7 +97,7 @@ const mockApi = {
     if (mockMyProfile.courses.some((item) => item.id === courseId)) {
       throw new ApiError(409, 'Ders zaten ekli', { hadToken: true })
     }
-    mockMyProfile.courses.push({ id: course.id, name: course.name })
+    mockMyProfile.courses.push({ id: course.id, code: course.code, name: course.name })
     return { id: mockNextId++, mentor_id: mockMyProfile.id, course_id: courseId }
   },
   async searchMentors(courseName) {
@@ -109,6 +113,13 @@ const mockApi = {
 }
 
 const source = USE_MOCK ? mockApi : realApi
+
+// Ders adları benzersiz olmadığı için (api-contract.md) ekranda kod + ad birlikte gösterilir.
+// Örn. "BYM222 · Görüntü İşleme". Kod yoksa yalnızca ad.
+export function courseLabel(course) {
+  if (!course) return 'Ders'
+  return course.code ? `${course.code} · ${course.name}` : course.name
+}
 
 export const isMockMode = USE_MOCK
 

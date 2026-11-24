@@ -5,7 +5,13 @@
 
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { addCourse, createProfile, getCourses, getMyProfile } from '../services/mentorApi.js'
+import {
+  addCourse,
+  courseLabel,
+  createProfile,
+  getCourses,
+  getMyProfile,
+} from '../services/mentorApi.js'
 
 const BIO_MAX = 500
 const DEPARTMENT_MIN = 2
@@ -183,9 +189,9 @@ function CourseSection({ profile, onCourseAdded }) {
     try {
       await addCourse(courseId)
       const course = courses.find((item) => item.id === courseId)
-      onCourseAdded({ id: courseId, name: course?.name ?? 'Ders' })
+      onCourseAdded({ id: courseId, code: course?.code, name: course?.name ?? 'Ders' })
       setSelectedId('')
-      setMessage({ type: 'success', text: `${course?.name ?? 'Ders'} profiline eklendi.` })
+      setMessage({ type: 'success', text: `${courseLabel(course)} profiline eklendi.` })
     } catch (error) {
       const text =
         error.status === 409
@@ -210,7 +216,7 @@ function CourseSection({ profile, onCourseAdded }) {
       ) : (
         <ul>
           {profile.courses.map((course) => (
-            <li key={course.id}>{course.name}</li>
+            <li key={course.id}>{courseLabel(course)}</li>
           ))}
         </ul>
       )}
@@ -245,7 +251,7 @@ function CourseSection({ profile, onCourseAdded }) {
               </option>
               {availableCourses.map((course) => (
                 <option key={course.id} value={course.id}>
-                  {course.name}
+                  {courseLabel(course)}
                 </option>
               ))}
             </select>
