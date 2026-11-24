@@ -3,9 +3,11 @@ import os
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers import auth
+from app.security.errors import validation_exception_handler
 
 load_dotenv()
 
@@ -36,6 +38,8 @@ app.add_middleware(
     ],
 )
 
+
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
 
 app.include_router(auth.router)
 
