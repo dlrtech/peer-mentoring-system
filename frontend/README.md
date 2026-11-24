@@ -2,6 +2,13 @@
 
 React + Vite (JavaScript), React Router ve sade CSS.
 
+## Gereksinimler
+
+- **Node.js 20.19+ veya 22.12+** (Vite 8'in şartı). Kontrol: `node -v`
+- npm (Node ile birlikte gelir)
+
+Eski bir Node sürümünde `npm ci` uyarı verir ve `npm run dev` çalışmayabilir.
+
 ## Kurulum
 
 ```bash
@@ -36,6 +43,6 @@ src/
 
 - **İstekler:** Modül servisleri (`authApi.js`, `mentorApi.js`) `api.get/post(...)` kullanır; `fetch`'i doğrudan çağırmaz.
 - **Token:** Yalnızca bellekte tutulur (`setToken` / `clearToken`). `localStorage` kullanılmaz.
-- **Hatalar:** `ApiError` kullanıcıya gösterilecek Türkçe mesajı (`message`), HTTP kodunu (`status`) ve 422'de alan hatalarını (`fieldErrors`) taşır. Backend'in ham `detail` metni ekrana basılmaz.
+- **Hatalar:** `ApiError` kullanıcıya gösterilecek Türkçe mesajı (`message`), HTTP kodunu (`status`) ve 422'de alan hatalarını (`fieldErrors`) taşır. Token'sız istekte 401 "E-posta veya parola hatalı", token'lı istekte "Oturumun geçersiz…" mesajı verir; 403 "Hesabın henüz doğrulanmadı" der. Backend'in ham `detail` metni ekrana basılmaz.
 - **Rotalar:** Yeni sayfa, modülü develop'a merge edildikten sonra `App.jsx`'e eklenir.
 - **Güvenlik:** Kullanıcı metni her zaman düz metin olarak gösterilir; `dangerouslySetInnerHTML` kullanılmaz.

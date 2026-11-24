@@ -30,14 +30,19 @@ const DEFAULT_MESSAGES = {
   0: 'Sunucuya ulaşılamadı. Bağlantını kontrol edip tekrar dene.',
   400: 'İstek işlenemedi. Bilgileri kontrol edip tekrar dene.',
   401: 'Oturumun geçersiz veya süresi dolmuş. Lütfen tekrar giriş yap.',
-  403: 'Bu işlem için yetkin yok.',
+  403: 'Hesabın henüz doğrulanmadı. Doğrulama tamamlanınca bu işlemi yapabilirsin.',
   404: 'Aradığın kayıt bulunamadı.',
   409: 'Bu kayıt zaten var.',
   422: 'Bazı alanlar geçersiz. Lütfen kontrol et.',
   500: 'Sunucuda bir hata oluştu. Lütfen daha sonra tekrar dene.',
 }
 
-function defaultMessage(status) {
+// Token'sız istekte 401 = giriş bilgileri hatalı (ör. /auth/login'de yanlış parola).
+// Token'lı istekte 401 = oturum geçersiz veya süresi dolmuş.
+const LOGIN_FAILED_MESSAGE = 'E-posta veya parola hatalı.'
+
+function defaultMessage(status, hadToken) {
+  if (status === 401 && !hadToken) return LOGIN_FAILED_MESSAGE
   if (DEFAULT_MESSAGES[status]) return DEFAULT_MESSAGES[status]
   return status >= 500 ? DEFAULT_MESSAGES[500] : DEFAULT_MESSAGES[400]
 }
@@ -57,8 +62,8 @@ function toFieldErrors(detail) {
 // Backend hatası. Kullanıcıya gösterilecek Türkçe mesaj `message` içindedir;
 // backend'in ham cevabı (`detail`) sadece sayfaya özel karar vermek için tutulur, ekrana basılmaz.
 export class ApiError extends Error {
-  constructor(status, detail) {
-    super(defaultMessage(status))
+  constructor(status, detail, { hadToken = false } = {}) {
+    super(defaultMessage(status, hadToken))
     this.name = 'ApiError'
     this.status = status
     this.detail = detail
@@ -100,7 +105,7 @@ export async function apiRequest(path, { method = 'GET', body, headers = {}, sig
 
   if (!response.ok) {
     if (response.status === 401 && hadToken && unauthorizedHandler) unauthorizedHandler()
-    throw new ApiError(response.status, data?.detail ?? null)
+    throw new ApiError(response.status, data?.detail ?? null, { hadToken })
   }
 
   return data
