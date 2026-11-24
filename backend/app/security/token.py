@@ -11,18 +11,22 @@ from typing import Optional
 
 import jwt
 
-_ALLOWED_ALGORITHMS = {"HS256", "HS384", "HS512"}
-_MIN_SECRET_LENGTH = 32
+# İzinli algoritma → anahtarın en az bayt uzunluğu (RFC 7518 §3.2: hash çıktısı kadar).
+_MIN_SECRET_BYTES = {"HS256": 32, "HS384": 48, "HS512": 64}
 
 
 def _settings():
     secret = os.getenv("SECRET_KEY", "")
     algorithm = os.getenv("ALGORITHM", "HS256")
     minutes = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
-    if len(secret) < _MIN_SECRET_LENGTH:
-        raise RuntimeError("SECRET_KEY en az 32 karakter olmalı (.env dosyasını kontrol edin).")
-    if algorithm not in _ALLOWED_ALGORITHMS:
-        raise RuntimeError(f"ALGORITHM şunlardan biri olmalı: {sorted(_ALLOWED_ALGORITHMS)}")
+    if algorithm not in _MIN_SECRET_BYTES:
+        raise RuntimeError(f"ALGORITHM şunlardan biri olmalı: {sorted(_MIN_SECRET_BYTES)}")
+    if len(secret.encode("utf-8")) < _MIN_SECRET_BYTES[algorithm]:
+        raise RuntimeError(
+            f"{algorithm} için SECRET_KEY en az {_MIN_SECRET_BYTES[algorithm]} bayt olmalı (.env dosyasını kontrol edin)."
+        )
+    if minutes <= 0:
+        raise RuntimeError("ACCESS_TOKEN_EXPIRE_MINUTES pozitif bir tam sayı olmalı.")
     return secret, algorithm, minutes
 
 
