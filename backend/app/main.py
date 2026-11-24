@@ -1,7 +1,9 @@
+
+import os
+
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import os
-from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -16,9 +18,20 @@ app.add_middleware(
     allow_origins=[
         os.getenv("FRONTEND_URL", "http://localhost:5173")
     ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_credentials=False,
+    allow_methods=[
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE",
+        "OPTIONS"
+    ],
+    allow_headers=[
+        "Accept",
+        "Content-Type",
+        "Authorization"
+    ],
 )
 
 
