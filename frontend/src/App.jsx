@@ -3,11 +3,12 @@ import { useAuth } from './auth/AuthContext.jsx'
 import Navbar from './components/Navbar.jsx'
 import Home from './pages/Home.jsx'
 import Login from './pages/Login.jsx'
+import MentorProfile from './pages/MentorProfile.jsx'
+import MentorSearch from './pages/MentorSearch.jsx'
 import Register from './pages/Register.jsx'
 
 // Sayfa rotaları bu dosyada toplanır (sorumlu: Berat).
 // Kural: bir sayfa yalnızca ilgili modülü develop'a merge edildikten sonra buraya import edilir.
-// Bekleyen: /mentor/profile ve /mentor/search (Miraç, PR #3) → RequireAuth içine eklenecek.
 
 // Giriş yapmamış kullanıcıyı /login'e gönderir; girişten sonra geldiği sayfaya döner.
 function RequireAuth() {
@@ -37,7 +38,9 @@ export default function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route element={<RequireAuth />}>
-            {/* Miraç'ın sayfaları PR #3 merge edilince buraya eklenecek */}
+            {/* Giriş gerektiren sayfalar (Miraç, PR #3) */}
+            <Route path="/mentor/profile" element={<MentorProfile />} />
+            <Route path="/mentor/search" element={<MentorSearch />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
