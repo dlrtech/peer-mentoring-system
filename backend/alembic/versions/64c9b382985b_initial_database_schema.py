@@ -1,0 +1,184 @@
+
+"""Initial database schema
+
+Revision ID: 64c9b382985b
+Revises:
+Create Date: 2026-11-24 18:23:13.468837
+
+"""
+from typing import Sequence, Union
+
+from alembic import op
+import sqlalchemy as sa
+
+
+# revision identifiers, used by Alembic.
+revision: str = '64c9b382985b'
+down_revision: Union[str, Sequence[str], None] = None
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+
+def upgrade() -> None:
+    """Upgrade schema."""
+
+    # Courses table
+    op.create_table(
+        'courses',
+        sa.Column('id', sa.Integer(), nullable=False),
+        sa.Column('code', sa.String(length=20), nullable=False),
+        sa.Column('name', sa.String(length=150), nullable=False),
+        sa.Column('description', sa.Text(), nullable=True),
+        sa.PrimaryKeyConstraint('id')
+    )
+
+    op.create_index(
+        op.f('ix_courses_id'), 'courses', ['id'], unique=False
+    )
+    op.create_index(
+        op.f('ix_courses_name'), 'courses', ['name'], unique=False
+    )
+    op.create_index(
+        op.f('ix_courses_code'), 'courses', ['code'], unique=True
+    )
+
+    # Users table
+    op.create_table(
+        'users',
+        sa.Column('id', sa.Integer(), nullable=False),
+        sa.Column('full_name', sa.String(length=150), nullable=False),
+        sa.Column('email', sa.String(length=255), nullable=False),
+        sa.Column('password_hash', sa.String(length=255), nullable=False),
+        sa.Column('is_verified', sa.Boolean(), server_default='false', nullable=False),
+        sa.Column('is_admin', sa.Boolean(), server_default='false', nullable=False),
+        sa.Column(
+            'created_at',
+            sa.DateTime(timezone=True),
+            server_default=sa.text('now()'),
+            nullable=False
+        ),
+        sa.PrimaryKeyConstraint('id')
+    )
+
+    op.create_index(
+        op.f('ix_users_email'), 'users', ['email'], unique=True
+    )
+    op.create_index(
+        op.f('ix_users_id'), 'users', ['id'], unique=False
+    )
+
+    # Mentor profiles table
+    op.create_table(
+        'mentor_profiles',
+        sa.Column('id', sa.Integer(), nullable=False),
+        sa.Column('user_id', sa.Integer(), nullable=False),
+        sa.Column('bio', sa.Text(), nullable=False),
+        sa.Column('department', sa.String(length=150), nullable=False),
+        sa.Column(
+            'created_at',
+            sa.DateTime(timezone=True),
+            server_default=sa.text('now()'),
+            nullable=False
+        ),
+        sa.ForeignKeyConstraint(
+            ['user_id'], ['users.id'], ondelete='CASCADE'
+        ),
+        sa.PrimaryKeyConstraint('id'),
+        sa.UniqueConstraint('user_id')
+    )
+
+    op.create_index(
+        op.f('ix_mentor_profiles_id'),
+        'mentor_profiles',
+        ['id'],
+        unique=False
+    )
+
+    # Mentor courses table
+    op.create_table(
+        'mentor_courses',
+        sa.Column('id', sa.Integer(), nullable=False),
+        sa.Column('mentor_id', sa.Integer(), nullable=False),
+        sa.Column('course_id', sa.Integer(), nullable=False),
+        sa.ForeignKeyConstraint(
+            ['course_id'], ['courses.id'], ondelete='CASCADE'
+        ),
+        sa.ForeignKeyConstraint(
+            ['mentor_id'], ['mentor_profiles.id'], ondelete='CASCADE'
+        ),
+        sa.PrimaryKeyConstraint('id'),
+        sa.UniqueConstraint(
+            'mentor_id', 'course_id', name='uq_mentor_course'
+        )
+    )
+
+    op.create_index(
+        op.f('ix_mentor_courses_course_id'),
+        'mentor_courses',
+        ['course_id'],
+        unique=False
+    )
+    op.create_index(
+        op.f('ix_mentor_courses_id'),
+        'mentor_courses',
+        ['id'],
+        unique=False
+    )
+    op.create_index(
+        op.f('ix_mentor_courses_mentor_id'),
+        'mentor_courses',
+        ['mentor_id'],
+        unique=False
+    )
+
+
+def downgrade() -> None:
+    """Downgrade schema."""
+
+    # Drop mentor courses
+    op.drop_index(
+        op.f('ix_mentor_courses_mentor_id'),
+        table_name='mentor_courses'
+    )
+    op.drop_index(
+        op.f('ix_mentor_courses_id'),
+        table_name='mentor_courses'
+    )
+    op.drop_index(
+        op.f('ix_mentor_courses_course_id'),
+        table_name='mentor_courses'
+    )
+    op.drop_table('mentor_courses')
+
+    # Drop mentor profiles
+    op.drop_index(
+        op.f('ix_mentor_profiles_id'),
+        table_name='mentor_profiles'
+    )
+    op.drop_table('mentor_profiles')
+
+    # Drop users
+    op.drop_index(
+        op.f('ix_users_id'),
+        table_name='users'
+    )
+    op.drop_index(
+        op.f('ix_users_email'),
+        table_name='users'
+    )
+    op.drop_table('users')
+
+    # Drop courses
+    op.drop_index(
+        op.f('ix_courses_code'),
+        table_name='courses'
+    )
+    op.drop_index(
+        op.f('ix_courses_name'),
+        table_name='courses'
+    )
+    op.drop_index(
+        op.f('ix_courses_id'),
+        table_name='courses'
+    )
+    op.drop_table('courses')
