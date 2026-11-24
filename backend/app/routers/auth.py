@@ -19,6 +19,7 @@ from app.schemas.auth import (
     TokenResponse,
     UserResponse,
 )
+from app.security.dependencies import get_current_user
 from app.security.password import hash_password, verify_password
 from app.security.token import create_access_token
 
@@ -90,3 +91,10 @@ def login_user(payload: LoginRequest, db: Session = Depends(get_db)):
     # Doğrulanmamış hesap giriş yapabilir; korumalı işlemlerde 403'ü
     # Mert'in get_verified_user() bağımlılığı verir.
     return TokenResponse(access_token=create_access_token(user.id))
+
+
+@router.get("/me", response_model=UserResponse)
+def read_current_user(user: User = Depends(get_current_user)):
+    # get_verified_user değil get_current_user: doğrulanmamış hesap da kendi
+    # bilgisini görebilmeli, frontend "hesap doğrulanmadı" uyarısını bundan gösterir.
+    return user
