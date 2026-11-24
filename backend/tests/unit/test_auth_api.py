@@ -247,3 +247,86 @@ def test_login_invalid_email_format_returns_422(client):
     response = login(client, email="gecersiz")
 
     assert response.status_code == 422
+
+
+# --- GET /auth/me ---
+
+
+def auth_header(token):
+    return {"Authorization": f"Bearer {token}"}
+
+
+def login_token(client):
+    return login(client).json()["access_token"]
+
+
+def test_me_returns_current_user(client):
+    user_id = register(client).json()["id"]
+
+    response = client.get("/auth/me", headers=auth_header(login_token(client)))
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "id": user_id,
+        "full_name": "Ayşe Yılmaz",
+        "email": "ayse@ornek.edu.tr",
+        "is_verified": False,
+    }
+
+
+def test_me_shows_verified_status_from_database(client, session_factory):
+    register(client)
+    token = login_token(client)
+
+    with session_factory() as db:
+        user = db.scalar(select(User))
+        user.is_verified = True
+        db.commit()
+
+    response = client.get("/auth/me", headers=auth_header(token))
+
+    assert response.status_code == 200
+    assert response.json()["is_verified"] is True
+
+
+def test_me_response_has_no_sensitive_fields(client):
+    register(client)
+
+    body = client.get("/auth/me", headers=auth_header(login_token(client))).json()
+
+    assert set(body) == {"id", "full_name", "email", "is_verified"}
+
+
+def test_me_without_token_returns_401(client):
+    response = client.get("/auth/me")
+
+    assert response.status_code == 401
+
+
+@pytest.mark.parametrize("token", ["bozuk.token.degeri", "x"])
+def test_me_with_invalid_token_returns_401(client, token):
+    response = client.get("/auth/me", headers=auth_header(token))
+
+    assert response.status_code == 401
+
+
+def test_me_with_non_bearer_scheme_returns_401(client):
+    register(client)
+    token = login_token(client)
+
+    response = client.get("/auth/me", headers={"Authorization": f"Basic {token}"})
+
+    assert response.status_code == 401
+
+
+def test_me_for_deleted_user_returns_401(client, session_factory):
+    register(client)
+    token = login_token(client)
+
+    with session_factory() as db:
+        db.delete(db.scalar(select(User)))
+        db.commit()
+
+    response = client.get("/auth/me", headers=auth_header(token))
+
+    assert response.status_code == 401
