@@ -29,6 +29,7 @@ export default function MentorSearch() {
   const [errorMessage, setErrorMessage] = useState('')
   const [searchedFor, setSearchedFor] = useState('')
   const controllerRef = useRef(null)
+  const inputRef = useRef(null)
 
   // Sayfadan çıkılırsa yarım kalan isteği iptal et.
   useEffect(() => () => controllerRef.current?.abort(), [])
@@ -39,10 +40,12 @@ export default function MentorSearch() {
 
     if (!query) {
       setInputError('Aramak için bir ders adı yaz.')
+      inputRef.current?.focus()
       return
     }
     if (query.length > MAX_LENGTH) {
       setInputError(`Ders adı en fazla ${MAX_LENGTH} karakter olabilir.`)
+      inputRef.current?.focus()
       return
     }
     setInputError('')
@@ -60,7 +63,14 @@ export default function MentorSearch() {
       setStatus('done')
     } catch (error) {
       if (error?.name === 'AbortError') return
-      setErrorMessage(error?.fieldErrors?.course_name ?? error?.message ?? 'Arama yapılamadı.')
+      // 422'de FastAPI İngilizce mesaj döner; ekranda kendi Türkçe mesajımızı gösteriyoruz.
+      if (error?.status === 422) {
+        setInputError(`Ders adı 1–${MAX_LENGTH} karakter olmalı.`)
+        setStatus('idle')
+        inputRef.current?.focus()
+        return
+      }
+      setErrorMessage(error?.message ?? 'Arama yapılamadı.')
       setStatus('error')
     }
   }
@@ -83,6 +93,7 @@ export default function MentorSearch() {
           <div style={formStyle}>
             <input
               id="course-name"
+              ref={inputRef}
               type="search"
               value={courseName}
               onChange={(event) => setCourseName(event.target.value)}

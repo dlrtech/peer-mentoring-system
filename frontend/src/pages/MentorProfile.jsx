@@ -24,6 +24,19 @@ function validateProfile({ bio, department }) {
   return errors
 }
 
+// Backend 422 alan adlarını Türkçe mesajlara çevirir (FastAPI mesajları İngilizcedir).
+const SERVER_FIELD_MESSAGES = {
+  department: `Bölüm adı ${DEPARTMENT_MIN}–${DEPARTMENT_MAX} karakter olmalı.`,
+  bio: `Tanıtım 1–${BIO_MAX} karakter olmalı.`,
+}
+
+const FIELD_ORDER = ['department', 'bio']
+
+function focusFirstError(errors) {
+  const first = FIELD_ORDER.find((field) => errors[field])
+  if (first) document.getElementById(first)?.focus()
+}
+
 function CreateProfileForm({ onCreated }) {
   const [form, setForm] = useState({ bio: '', department: '' })
   const [errors, setErrors] = useState({})
@@ -38,7 +51,10 @@ function CreateProfileForm({ onCreated }) {
     event.preventDefault()
     const found = validateProfile(form)
     setErrors(found)
-    if (Object.keys(found).length > 0) return
+    if (Object.keys(found).length > 0) {
+      focusFirstError(found)
+      return
+    }
 
     setSaving(true)
     setSubmitError('')
@@ -50,9 +66,21 @@ function CreateProfileForm({ onCreated }) {
       onCreated(profile)
     } catch (error) {
       if (error.status === 409) {
-        setSubmitError('Zaten bir mentor profilin var. Sayfayı yenileyip tekrar dene.')
+        // Profil zaten var (ör. başka sekmede oluşturuldu): sayfayı yenilemeden mevcut profili yükle.
+        try {
+          onCreated(await getMyProfile())
+        } catch {
+          setSubmitError('Zaten bir mentor profilin var ama yüklenemedi. Biraz sonra tekrar dene.')
+        }
+      } else if (error.status === 422) {
+        const serverErrors = {}
+        for (const key of Object.keys(error.fieldErrors ?? {})) {
+          if (SERVER_FIELD_MESSAGES[key]) serverErrors[key] = SERVER_FIELD_MESSAGES[key]
+        }
+        setErrors(serverErrors)
+        setSubmitError('Bazı alanlar geçersiz. Lütfen kontrol et.')
+        focusFirstError(serverErrors)
       } else {
-        setErrors(error.fieldErrors ?? {})
         setSubmitError(error.message)
       }
     } finally {
@@ -164,7 +192,9 @@ function CourseSection({ profile, onCourseAdded }) {
           ? 'Bu ders zaten profilinde ekli.'
           : error.status === 404
             ? 'Seçilen ders bulunamadı. Listeyi yenileyip tekrar dene.'
-            : error.message
+            : error.status === 422
+              ? 'Geçersiz ders seçimi. Listeden bir ders seç.'
+              : error.message
       setMessage({ type: 'error', text })
     } finally {
       setAdding(false)
