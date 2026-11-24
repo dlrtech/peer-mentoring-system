@@ -43,6 +43,6 @@ src/
 
 - **İstekler:** Modül servisleri (`authApi.js`, `mentorApi.js`) `api.get/post(...)` kullanır; `fetch`'i doğrudan çağırmaz.
 - **Token:** Yalnızca bellekte tutulur (`setToken` / `clearToken`). `localStorage` kullanılmaz.
-- **Hatalar:** `ApiError` kullanıcıya gösterilecek Türkçe mesajı (`message`), HTTP kodunu (`status`) ve 422'de alan hatalarını (`fieldErrors`) taşır. Token'sız istekte 401 "E-posta veya parola hatalı", token'lı istekte "Oturumun geçersiz…" mesajı verir; 403 "Hesabın henüz doğrulanmadı" der. Backend'in ham `detail` metni ekrana basılmaz.
+- **Hatalar:** `ApiError` kullanıcıya gösterilecek Türkçe mesajı (`message`), HTTP kodunu (`status`) ve 422'de alan hatalarını (`fieldErrors`) taşır. Token'sız istekte 401 "Bu sayfa için giriş yapmalısın", token'lı istekte "Oturumun geçersiz…" mesajı verir (yanlış parola mesajını Login sayfası gösterir); 403 "Hesabın henüz doğrulanmadı" der. Backend'in ham `detail` metni ekrana basılmaz.
 - **Rotalar:** Yeni sayfa, modülü develop'a merge edildikten sonra `App.jsx`'e eklenir.
 - **Güvenlik:** Kullanıcı metni her zaman düz metin olarak gösterilir; `dangerouslySetInnerHTML` kullanılmaz.

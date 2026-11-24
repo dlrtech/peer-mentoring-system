@@ -37,12 +37,14 @@ const DEFAULT_MESSAGES = {
   500: 'Sunucuda bir hata oluştu. Lütfen daha sonra tekrar dene.',
 }
 
-// Token'sız istekte 401 = giriş bilgileri hatalı (ör. /auth/login'de yanlış parola).
+// Token'sız istekte 401 = kullanıcı giriş yapmamış.
 // Token'lı istekte 401 = oturum geçersiz veya süresi dolmuş.
-const LOGIN_FAILED_MESSAGE = 'E-posta veya parola hatalı.'
+// Not: /auth/login'deki yanlış parola (401) için "E-posta veya parola hatalı" mesajını
+// Login sayfası kendisi gösterir; burada genel mesaj verilir.
+const NOT_LOGGED_IN_MESSAGE = 'Bu sayfa için giriş yapmalısın.'
 
 function defaultMessage(status, hadToken) {
-  if (status === 401 && !hadToken) return LOGIN_FAILED_MESSAGE
+  if (status === 401 && !hadToken) return NOT_LOGGED_IN_MESSAGE
   if (DEFAULT_MESSAGES[status]) return DEFAULT_MESSAGES[status]
   return status >= 500 ? DEFAULT_MESSAGES[500] : DEFAULT_MESSAGES[400]
 }
