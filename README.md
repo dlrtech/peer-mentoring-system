@@ -67,8 +67,7 @@ python -m pytest tests/unit
 
 | API | Durum |
 |---|---|
-| `POST /auth/register`, `POST /auth/login` | Hazır |
-| `GET /auth/me` | İnceleme bekliyor |
+| `POST /auth/register`, `POST /auth/login`, `GET /auth/me` | Hazır |
 | `GET /courses`, `POST /mentors/profile`, `GET /mentors/profile`, `POST /mentors/courses` | Yapılacak |
 | `GET /mentors/search` | Yapılacak |
 
