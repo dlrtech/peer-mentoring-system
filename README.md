@@ -30,14 +30,20 @@ Ayrıntılar için: [backend/README.md](backend/README.md) ve [frontend/README.m
 
 ```bash
 python -m venv .venv
+source .venv/bin/activate
 python -m pip install -r requirements.txt
-cp .env.example .env          # DATABASE_URL ve SECRET_KEY'i kendinize göre düzenleyin
+cp .env.example .env          # DATABASE_URL, SECRET_KEY ve DEMO_USER_PASSWORD'ü düzenleyin
 python -m alembic upgrade head
 python -m scripts.seed_courses
+python -m scripts.seed_demo_users
 python -m uvicorn app.main:app --reload
 ```
 
 Windows'ta sanal ortam için `.\.venv\Scripts\Activate.ps1`, kopyalama için `Copy-Item .env.example .env` kullanın.
+
+`.env` ayarları:
+- `SECRET_KEY` en az 32 bayt olmalıdır; `YOUR_SECRET_KEY` olarak bırakılırsa giriş sırasında token üretilemez. Rastgele bir anahtar için: `python -c "import secrets; print(secrets.token_hex(32))"`
+- `DEMO_USER_PASSWORD` (8–128 karakter): `seed_demo_users` komutunun oluşturduğu iki doğrulanmış demo hesabının parolasıdır. Ayrıntı: [backend/README.md](backend/README.md).
 
 - Swagger: http://localhost:8000/docs
 - Sağlık kontrolü: http://localhost:8000/health
@@ -68,8 +74,10 @@ python -m pytest tests/unit
 | API | Durum |
 |---|---|
 | `POST /auth/register`, `POST /auth/login`, `GET /auth/me` | Hazır |
-| `GET /courses`, `POST /mentors/profile`, `GET /mentors/profile`, `POST /mentors/courses` | Yapılacak |
-| `GET /mentors/search` | Yapılacak |
+| `GET /courses`, `POST /mentors/profile`, `GET /mentors/profile`, `POST /mentors/courses` | Hazır |
+| `GET /mentors/search` | Hazır |
+
+Doğrulama hatası (422) yanıtlarında gönderilen değer (ör. parola) geri döndürülmez.
 
 Yeni kayıtlar doğrulanmamış (`is_verified=false`) açılır; e-posta doğrulaması Faz 4'e bırakılmıştır.
 Bu tablo geliştirme ilerledikçe güncellenir.
@@ -114,4 +122,4 @@ git push -u origin feature/<kendi-branch-adi>
 | Berat Serçe | Frontend altyapısı, kayıt/giriş ekranları |
 | Miraç Arda Seçkin | Profil ve arama ekranları |
 | Hilal Zeynep Karaca | Test altyapısı ve testler |
-| Mert Mak | Kimlik ve parola güvenliği |
+| Mert Mak | Güvenlik (parola, JWT, yetki), güvenlik review'ları |
