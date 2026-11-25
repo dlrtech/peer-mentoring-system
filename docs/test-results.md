@@ -10,9 +10,9 @@
 
 | Test Katmanı | Araç | Kapsam | Toplam Test | Geçen | Kalan | Durum |
 |---|---|---|---|---|---|---|
-| Backend Birim & Entegrasyon | `pytest` | Veritabanı, Modeller, Auth API, Health, Mentör Arama (UC-3) | 72 | 72 | 0 | ✅ Geçti |
+| Backend Birim & Entegrasyon | `pytest` | Veritabanı, Modeller, Auth API, Health, Mentör Profili/Dersler (F3-01), Mentör Arama (UC-3) | 82 | 82 | 0 | ✅ Geçti |
 | Uçtan Uca (E2E) Smoke | `Playwright` | Frontend Ana Sayfa, `/health`, `/` (Chromium, Firefox, WebKit) | 9 | 9 | 0 | ✅ Geçti |
-| **Genel Toplam** | — | — | **81** | **81** | **0** | ✅ **Başarılı** |
+| **Genel Toplam** | — | — | **91** | **91** | **0** | ✅ **Başarılı** |
 
 ---
 
@@ -25,6 +25,7 @@
 | `tests/unit/test_health.py` | Sistem sağlık kontrolleri (`/health`, `/`) | 2 | ✅ Passed |
 | `tests/unit/test_models.py` | SQLAlchemy veritabanı modelleri ve kısıtları | 7 | ✅ Passed |
 | `tests/unit/test_search_api.py` | Mentör Arama API (`GET /mentors/search`) — T04, F3-02, T18 (kısmi), Türkçe `İ/I` karakter araması | 16 | ✅ Passed |
+| `tests/unit/test_mentors.py` | Mentör Profili & Ders İlişkileri API (`POST/GET /mentors/profile`, `POST /mentors/courses`, `GET /courses`) — F3-01 (`409`, `404`, `422`) | 10 | ✅ Passed |
 
 ---
 
@@ -37,11 +38,3 @@ Tarayıcı matrisi: **Chromium, Firefox, WebKit** (3 senaryo × 3 tarayıcı = 9
 | `smoke.spec.js:6` | Uygulama ana sayfası (`http://localhost:5173`) hatasız açılmalı | Chromium, Firefox, WebKit | ✅ Passed |
 | `smoke.spec.js:11` | Backend sağlık kontrolü (`GET /health`) `200 OK` ve `{"status":"ok"}` dönmeli | Chromium, Firefox, WebKit | ✅ Passed |
 | `smoke.spec.js:19` | Backend ana uç noktası (`GET /`) erişilebilir olmalı | Chromium, Firefox, WebKit | ✅ Passed |
-
----
-
-## 4. Bekleyen PR Entegrasyonları (Merge Sonrası Doğrulanacak)
-
-| PR | Sorumlu | Kapsam & Eşleşen Test Senaryoları | Beklenen Test Dosyası | Durum |
-|---|---|---|---|---|
-| **PR #15** | Ekip Üyesi | Onay bekleyen Faz 3 güncellemesi | `backend/tests/unit/` | ⏳ PR Onay & Merge Bekliyor |
