@@ -10,9 +10,9 @@
 
 | Test Katmanı | Araç | Kapsam | Toplam Test | Geçen | Kalan | Durum |
 |---|---|---|---|---|---|---|
-| Backend Birim & Entegrasyon | `pytest` | Veritabanı, Modeller, Auth API, Health, Mentör Profili/Dersler (F3-01), Mentör Arama (UC-3) | 82 | 82 | 0 | ✅ Geçti |
+| Backend Birim & Entegrasyon | `pytest` | Veritabanı, Modeller, Auth API, Validation (422), Health, Mentör Profili/Dersler (F3-01), Mentör Arama (UC-3) | 85 | 85 | 0 | ✅ Geçti |
 | Uçtan Uca (E2E) Smoke | `Playwright` | Frontend Ana Sayfa, `/health`, `/` (Chromium, Firefox, WebKit) | 9 | 9 | 0 | ✅ Geçti |
-| **Genel Toplam** | — | — | **91** | **91** | **0** | ✅ **Başarılı** |
+| **Genel Toplam** | — | — | **94** | **94** | **0** | ✅ **Başarılı** |
 
 ---
 
@@ -26,6 +26,7 @@
 | `tests/unit/test_models.py` | SQLAlchemy veritabanı modelleri ve kısıtları | 7 | ✅ Passed |
 | `tests/unit/test_search_api.py` | Mentör Arama API (`GET /mentors/search`) — T04, F3-02, T18 (kısmi), Türkçe `İ/I` karakter araması | 16 | ✅ Passed |
 | `tests/unit/test_mentors.py` | Mentör Profili & Ders İlişkileri API (`POST/GET /mentors/profile`, `POST /mentors/courses`, `GET /courses`) — F3-01 (`409`, `404`, `422`) | 10 | ✅ Passed |
+| `tests/unit/test_validation_errors.py` | 422 doğrulama hatalarında hassas girdi (parola) gizleme kontrolleri | 3 | ✅ Passed |
 
 ---
 

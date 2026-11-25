@@ -1,14 +1,21 @@
-﻿# Node & Frontend
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+
+# Frontend
 node_modules/
 dist/
-.env
 
-# Python & Backend
-__pycache__/
-*.py[cod]
-venv/
-.venv/
-
+# IDE
+.vscode/
 # Playwright
 /test-results/
 /playwright-report/
