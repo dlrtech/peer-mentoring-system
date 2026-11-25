@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import auth, mentors, courses
+from app.routers import auth, mentors, courses, search
 from app.security.errors import validation_exception_handler
 
 load_dotenv()
@@ -43,6 +43,7 @@ app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.include_router(auth.router)
 app.include_router(mentors.router)
 app.include_router(courses.router)
+app.include_router(search.router)
 
 
 @app.get("/")
