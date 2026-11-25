@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import auth, mentors, courses
+from app.routers import auth, mentors, courses, search
 
 load_dotenv()
 
@@ -39,6 +39,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(mentors.router)
 app.include_router(courses.router)
+app.include_router(search.router)
 
 
 @app.get("/")
