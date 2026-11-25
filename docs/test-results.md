@@ -10,9 +10,9 @@
 
 | Test Katmanı | Araç | Kapsam | Toplam Test | Geçen | Kalan | Durum |
 |---|---|---|---|---|---|---|
-| Backend Birim & Entegrasyon | `pytest` | Veritabanı, Modeller, Auth API, Health | 56 | 56 | 0 | ✅ Geçti |
+| Backend Birim & Entegrasyon | `pytest` | Veritabanı, Modeller, Auth API, Health, Mentör Arama (UC-3) | 72 | 72 | 0 | ✅ Geçti |
 | Uçtan Uca (E2E) Smoke | `Playwright` | Frontend Ana Sayfa, `/health`, `/` (Chromium, Firefox, WebKit) | 9 | 9 | 0 | ✅ Geçti |
-| **Genel Toplam** | — | — | **65** | **65** | **0** | ✅ **Başarılı** |
+| **Genel Toplam** | — | — | **81** | **81** | **0** | ✅ **Başarılı** |
 
 ---
 
@@ -24,6 +24,7 @@
 | `tests/unit/test_auth_api.py` | Kayıt, giriş, JWT token, e-posta doğrulama | 43 | ✅ Passed |
 | `tests/unit/test_health.py` | Sistem sağlık kontrolleri (`/health`, `/`) | 2 | ✅ Passed |
 | `tests/unit/test_models.py` | SQLAlchemy veritabanı modelleri ve kısıtları | 7 | ✅ Passed |
+| `tests/unit/test_search_api.py` | Mentör Arama API (`GET /mentors/search`) — T04, F3-02, T18 (kısmi), Türkçe `İ/I` karakter araması | 16 | ✅ Passed |
 
 ---
 
@@ -43,6 +44,4 @@ Tarayıcı matrisi: **Chromium, Firefox, WebKit** (3 senaryo × 3 tarayıcı = 9
 
 | PR | Sorumlu | Kapsam & Eşleşen Test Senaryoları | Beklenen Test Dosyası | Durum |
 |---|---|---|---|---|
-| **PR #13** | Yusuf Deligöz | Mentör Arama API (`GET /mentors/search`) — **T04, F3-02, T18 (kısmi)** | `backend/tests/unit/test_search_api.py` (+12 test) | ⏳ PR Merge Bekliyor |
-| **PR #11** | Tuğba Korkut | Mentör Profili ve Ders Kataloğu API (`GET /courses`) | `backend/tests/unit/` | ⏳ PR Merge Bekliyor |
-| **PR #14** | Mert | 422 doğrulama yanıtlarında gönderilen ham değerin gizlenmesi | `backend/tests/unit/test_auth_api.py` | ⏳ PR Merge Bekliyor |
+| **PR #15** | Ekip Üyesi | Onay bekleyen Faz 3 güncellemesi | `backend/tests/unit/` | ⏳ PR Onay & Merge Bekliyor |
