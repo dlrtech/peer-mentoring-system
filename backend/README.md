@@ -249,3 +249,35 @@ Pull Request'ler üzerinden takip edilir.
 
 - [Sistem Mimarisi](../docs/architecture.md)
 - [API Sözleşmesi](../docs/api-contract.md)
+
+## Demo Kullanıcılarının Oluşturulması
+
+Faz 3 demosunda e-posta doğrulaması tamamlanmış iki
+örnek kullanıcı hesabı kullanılmaktadır.
+
+| E-posta | Doğrulanmış | Admin |
+|---|---|---|
+| dogrulanmis@ornek.edu.tr | Evet | Hayır |
+| deniz@ornek.edu.tr | Evet | Hayır |
+
+Backend dizinindeki `.env` dosyasına aşağıdaki
+değişken eklenmelidir:
+
+```env
+DEMO_USER_PASSWORD=YOUR_DEMO_PASSWORD
+```
+
+`YOUR_DEMO_PASSWORD` yerine yerel demo parolası yazılmalıdır.
+
+Backend dizininde sanal ortam aktifken aşağıdaki komut
+çalıştırılmalıdır:
+
+```bash
+python -m scripts.seed_demo_users
+```
+
+Parolalar Argon2id algoritmasıyla hashlenerek saklanır.
+Gerçek parolalar GitHub reposuna yüklenmez.
+
+Seed komutu tekrar çalıştırıldığında mevcut kullanıcılar
+yeniden oluşturulmaz.
